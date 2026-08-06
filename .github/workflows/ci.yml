@@ -110,7 +110,7 @@ jobs:
           @@ -25,6 +25,11 @@
            #include <time.h>
            #include <errno.h>
-           
+
           +/* No longer found in glibc headers */
           +extern void *(*__malloc_hook) (size_t, const void *);
           +extern void *(*__realloc_hook) (void *ptr, size_t size, const void *);
@@ -118,17 +118,17 @@ jobs:
           +
            static void failmalloc_install (void);
            static void failmalloc_uninstall (void);
-           
+
           @@ -202,7 +207,8 @@
              srand (getpid () * 32452843 + time (NULL) * 49979687);
-           
+
              failmalloc_install ();
           +  atexit(failmalloc_uninstall);
            }
-           
+
           -void (*__malloc_initialize_hook) (void) = failmalloc_init;
           +void (*volatile __malloc_initialize_hook) (void) = failmalloc_init;
-           
+
           EOF
           ./configure --prefix="$HOME/failmalloc" --disable-dependency-tracking
           make
